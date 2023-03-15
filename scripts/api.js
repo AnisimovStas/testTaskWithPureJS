@@ -6,8 +6,13 @@ let selectedCompany;
 
 input.oninput = function () {
   queryCompany = input.value;
+  if (!input.value) {
+    result.style.display = "none";
+  } else {
+    result.style.display = "block";
+  }
 };
-
+// загрузка списка подходящих компаний
 async function LoadQuery() {
   const response = await fetch(url, {
     method: "POST",
@@ -26,7 +31,10 @@ async function LoadQuery() {
       suggestionCompanies.push(suggestion.data.name.full_with_opf);
     });
   } else {
-    console.log("Таких компаний не найдено");
+    suggestionCompanies.length = 0;
+    if (queryCompany.length > 1) {
+      suggestionCompanies.push("Таких компаний не найдено");
+    }
   }
 }
 
@@ -42,5 +50,4 @@ async function fetchCompany(query) {
     body: JSON.stringify({ query: query }),
   });
   selectedCompany = await response.json();
-  console.log(selectedCompany.suggestions[0].data.name.short);
 }
